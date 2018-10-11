@@ -3,6 +3,8 @@ package com.example.android.bookstore;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,6 +32,7 @@ public class InventoryActivity extends AppCompatActivity {
         displayDatabaseInfo();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void displayDatabaseInfo() {
 
         SQLiteDatabase db = DbHelper.getReadableDatabase();
@@ -43,20 +46,17 @@ public class InventoryActivity extends AppCompatActivity {
                 BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER
         };
 
-        Cursor c = db.query(
+        TextView dV = findViewById(R.id.text_view_inventory);
+
+        try (Cursor cursor = db.query(
                 BookEntry.TABLE_NAME,
                 projection,
                 null,
                 null,
                 null,
                 null,
-                null
-        );
-
-        TextView dV = findViewById(R.id.text_view_inventory);
-
-        try {
-            dV.setText("The books table contains " + c.getCount() + " books.\n\n");
+                null)) {
+            dV.setText("The books table contains " + cursor.getCount() + " books.\n\n");
             dV.append(BookEntry._ID + " - " +
                     BookEntry.COLUMN_PRODUCT_NAME + " - " +
                     BookEntry.COLUMN_PRODUCT_PRICE + " - " +
@@ -64,20 +64,20 @@ public class InventoryActivity extends AppCompatActivity {
                     BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME + " - " +
                     BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER + "\n");
 
-            int idColumnIndex = c.getColumnIndex(BookEntry._ID);
-            int nameColumnIndex = c.getColumnIndex(BookEntry.COLUMN_PRODUCT_NAME);
-            int priceColumnIndex = c.getColumnIndex(BookEntry.COLUMN_PRODUCT_PRICE);
-            int quantityColumnIndex = c.getColumnIndex(BookEntry.COLUMN_PRODUCT_QUANTITY);
-            int supplierNameColumnIndex = c.getColumnIndex(BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
-            int supplierPhoneNumberColumnIndex = c.getColumnIndex(BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER);
+            int idColumnIndex = cursor.getColumnIndex(BookEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_QUANTITY);
+            int supplierNameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
+            int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER);
 
-            while (c.moveToNext()) {
-                int currentID = c.getInt(idColumnIndex);
-                String currentName = c.getString(nameColumnIndex);
-                double currentPrice = c.getDouble(priceColumnIndex);
-                int currentQuantity = c.getInt(quantityColumnIndex);
-                String currentSupplier = c.getString(supplierNameColumnIndex);
-                String currentSupplierPhone = c.getString(supplierPhoneNumberColumnIndex);
+            while (cursor.moveToNext()) {
+                int currentID = cursor.getInt(idColumnIndex);
+                String currentName = cursor.getString(nameColumnIndex);
+                double currentPrice = cursor.getDouble(priceColumnIndex);
+                int currentQuantity = cursor.getInt(quantityColumnIndex);
+                String currentSupplier = cursor.getString(supplierNameColumnIndex);
+                String currentSupplierPhone = cursor.getString(supplierPhoneNumberColumnIndex);
 
                 dV.append(("\n" + currentID + " - " +
                         currentName + " - " +
@@ -86,23 +86,21 @@ public class InventoryActivity extends AppCompatActivity {
                         currentSupplier + " - " +
                         currentSupplierPhone));
             }
-        } finally {
-            c.close();
         }
     }
 
     private void insertBook() {
         SQLiteDatabase db = DbHelper.getWritableDatabase();
 
-        ContentValues v = new ContentValues();
+        ContentValues values = new ContentValues();
 
-        v.put(BookEntry.COLUMN_PRODUCT_NAME, "The Great Gatsby");
-        v.put(BookEntry.COLUMN_PRODUCT_PRICE, 19.99);
-        v.put(BookEntry.COLUMN_PRODUCT_QUANTITY, 1);
-        v.put(BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME, "Scholastic");
-        v.put(BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, "1-800-123-BOOK");
+        values.put(BookEntry.COLUMN_PRODUCT_NAME, "The Great Gatsby");
+        values.put(BookEntry.COLUMN_PRODUCT_PRICE, 19.99);
+        values.put(BookEntry.COLUMN_PRODUCT_QUANTITY, 1);
+        values.put(BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME, "Scholastic");
+        values.put(BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, "1-800-123-BOOK");
 
-        long newRowId = db.insert(BookEntry.TABLE_NAME, null, v);
+        db.insert(BookEntry.TABLE_NAME, null, values);
     }
 
     @Override
