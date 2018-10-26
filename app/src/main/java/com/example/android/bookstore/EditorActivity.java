@@ -66,6 +66,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private boolean bookHasChanged = false;
 
+    private boolean bookIsInvalid = false;
+
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
      * the view, and we change the bookHasChanged boolean to true.
@@ -78,10 +80,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }
     };
 
+    /**
+     * OnClickListener for the buttons in the activity_editor.xml file
+     * onClick sends to buttonPressed method case for each button.
+     */
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            buttonPressed(view);
+            buttonPressed( view );
         }
     };
 
@@ -133,6 +139,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         supplierEditText.setOnTouchListener( touchListener );
         supplierPhoneEditText.setOnTouchListener( touchListener );
 
+        // Setup onClickListeners on the buttons and ImageButtons within the layout.
         ImageButton incrementButton = findViewById( R.id.increment_quantity_button );
         incrementButton.setOnClickListener( onClickListener );
         ImageButton decrementButton = findViewById( R.id.decrement_quantity_button );
@@ -140,36 +147,56 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         Button contactButton = findViewById( R.id.contact_supplier );
         contactButton.setOnClickListener( onClickListener );
 
-        if (currentBookUri == null){
-            quantityEditText.setText("1");
+        // Set the quantity to "1" if there is no value given
+        if (currentBookUri == null) {
+            quantityEditText.setText( "1" );
         }
     }
 
-    public void buttonPressed(View view){
-        Integer quantity = Integer.valueOf( quantityEditText.getText().toString().trim() );
-        String phoneNumber = supplierPhoneEditText.getText().toString().trim();
-        switch (view.getId()){
+    /**
+     * Method declaring what will happen when each button within the layout is pressed.
+     */
+    public void buttonPressed(View view) {
+        switch (view.getId()) {
             case R.id.increment_quantity_button:
-                String incrementQuantity = String.valueOf( ++quantity );
-                quantityEditText.setText( incrementQuantity );
+                // If the quantity is empty set to "1"
+                if (quantityEditText.length() == 0) {
+                    quantityEditText.setText( "1" );
+                } else {
+                    // Otherwise Take given value of quantity add 1 to it and display new value
+                    Integer quantity = Integer.valueOf( quantityEditText.getText().toString().trim() );
+                    String incrementQuantity = String.valueOf( ++quantity );
+                    quantityEditText.setText( incrementQuantity );
+                }
                 break;
             case R.id.decrement_quantity_button:
+                // If the quantity is empty set to "0"
+                if (quantityEditText.length() == 0) {
+                    quantityEditText.setText( "0" );
+                }
+                // Grab the integer value of the quantityEditText field
+                Integer quantity = Integer.valueOf( quantityEditText.getText().toString().trim() );
+                // If the quantity is at "0" display a toast message saying " Sold Out "
                 if (quantity == 0) {
-                    Toast.makeText( view.getContext(), R.string.book_sold_out, Toast.LENGTH_SHORT ).show();
-                    return;
+                    Toast.makeText( this, R.string.book_sold_out, Toast.LENGTH_SHORT ).show();
                 } else {
+                    // Otherwise take the value of quantity subtract 1 and display the new value
                     String decrementQuantity = String.valueOf( --quantity );
                     quantityEditText.setText( decrementQuantity );
                 }
                 break;
             case R.id.contact_supplier:
-                if (phoneNumber.length() == 10){
+                String phoneNumber = supplierPhoneEditText.getText().toString().trim();
+                // If the phone # is 10 digits long, create an intent for a phone call
+                // and have the user choose an app to handle the call intent.
+                if (phoneNumber.length() == 10) {
                     Intent intent = new Intent( Intent.ACTION_DIAL );
                     intent.setData( Uri.parse( "tel:" + phoneNumber ) );
                     startActivity( intent );
                 } else {
-                    Toast.makeText( this, getString(R.string.editor_activity_invalid_phone_number),
-                            Toast.LENGTH_SHORT).show();
+                    // Otherwise display a toast message saying invalid phone number.
+                    Toast.makeText( this, getString( R.string.editor_activity_invalid_phone_number ),
+                            Toast.LENGTH_SHORT ).show();
                 }
                 break;
             default:
@@ -193,7 +220,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty( quantityString ) &&
                 TextUtils.isEmpty( supplierNameString ) &&
                 TextUtils.isEmpty( supplierPhoneString )) {
-            // Since no fields were modified, we can return early without creating a new pet.
+            // Since no fields were modified, we can return early without creating a new book.
             // No need to create ContentValues and no need to do any ContentProvider Operations.
             return;
         }
@@ -201,47 +228,61 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Create a ContentValues object where column names are the keys,
         // and book attributes from the editor are the values.
         ContentValues contentValues = new ContentValues();
-        contentValues.put( BookEntry.COLUMN_PRODUCT_NAME, nameString );
-        contentValues.put( BookEntry.COLUMN_PRODUCT_PRICE, priceString );
-        contentValues.put( BookEntry.COLUMN_PRODUCT_QUANTITY, quantityString );
-        contentValues.put( BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME, supplierNameString );
-        contentValues.put( BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, supplierPhoneString );
 
-        // Determine is this is a new or existing book by checking id currentBookUri is null or not
-        if (currentBookUri == null) {
-            // This is a NEW BOOK, so insert a new book into the provider,
-            // returning the content URI for the new book.
-            Uri newUri = getContentResolver().insert( BookEntry.CONTENT_URI, contentValues );
-
-            // Show a toast message depending on whether or not the insertion was successful.
-            if (newUri == null) {
-                // If the new content URI is null, then there was an error with insertion.
-                Toast.makeText( this, getString( R.string.editor_activity_insert_book_failed ),
-                        Toast.LENGTH_SHORT ).show();
-            } else {
-                // Otherwise, the insertion was successful and we can display a toast.
-                Toast.makeText( this, getString( R.string.editor_activity_insert_book_successful ),
-                        Toast.LENGTH_SHORT ).show();
-            }
+        // Validate that all the fields have been filled in appropriately
+        if (TextUtils.isEmpty( nameString ) || TextUtils.isEmpty( priceString ) ||
+                TextUtils.isEmpty( quantityString ) || TextUtils.isEmpty( supplierNameString ) ||
+                TextUtils.isEmpty( supplierPhoneString ) || Double.valueOf( priceString ) < 0 ||
+                Long.valueOf( supplierPhoneString ) < 0 || supplierPhoneString.length() != 10) {
+            // Tag book as Invalid to make sure the correct toast appears and user cannot exit.
+            bookIsInvalid = true;
         } else {
-            // Otherwise this is an EXISTING BOOK, so update the book with content URI: currentBookUri
-            // and pass in the new ContentValues. Pass in null for the selection and selection args
-            // because currentBookUri will already identify the correct row in the database that
-            // we want to modify.
-            int rowsAffected = getContentResolver().update( currentBookUri, contentValues, null, null );
+            contentValues.put( BookEntry.COLUMN_PRODUCT_NAME, nameString );
+            contentValues.put( BookEntry.COLUMN_PRODUCT_PRICE, priceString );
+            contentValues.put( BookEntry.COLUMN_PRODUCT_QUANTITY, quantityString );
+            contentValues.put( BookEntry.COLUMN_PRODUCT_SUPPLIER_NAME, supplierNameString );
+            contentValues.put( BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, supplierPhoneString );
 
-            // Show a toast message depending on whether or not the update was successful
-            if (rowsAffected == 0) {
-                // If the rowsAffected equals 0 then there was an error with the update
-                Toast.makeText( this, getString( R.string.editor_activity_update_book_failed ),
-                        Toast.LENGTH_SHORT ).show();
+            // Set book as Valid so it will continue with saving process and take user to inventory.
+            bookIsInvalid = false;
+
+            // Determine is this is a new or existing book by checking id currentBookUri is null or not
+            if (currentBookUri == null) {
+                // This is a NEW BOOK, so insert a new book into the provider,
+                // returning the content URI for the new book.
+                Uri newUri = getContentResolver().insert( BookEntry.CONTENT_URI, contentValues );
+
+                // Show a toast message depending on whether or not the insertion was successful.
+                if (newUri == null) {
+                    // If the new content URI is null, then there was an error with insertion.
+                    Toast.makeText( this, R.string.editor_activity_insert_book_failed,
+                            Toast.LENGTH_SHORT ).show();
+                } else {
+                    // Otherwise, the insertion was successful and we can display a toast.
+                    Toast.makeText( this, R.string.editor_activity_insert_book_successful,
+                            Toast.LENGTH_SHORT ).show();
+                }
             } else {
-                // Otherwise, the update was successful and we can display a toast
-                Toast.makeText( this, getString( R.string.editor_activity_update_book_successful ),
-                        Toast.LENGTH_SHORT ).show();
+                // Otherwise this is an EXISTING BOOK, so update the book with content URI: currentBookUri
+                // and pass in the new ContentValues. Pass in null for the selection and selection args
+                // because currentBookUri will already identify the correct row in the database that
+                // we want to modify.
+                int rowsAffected = getContentResolver().update( currentBookUri, contentValues, null, null );
+
+                // Show a toast message depending on whether or not the update was successful
+                if (rowsAffected == 0) {
+                    // If the rowsAffected equals 0 then there was an error with the update
+                    Toast.makeText( this, R.string.editor_activity_update_book_failed,
+                            Toast.LENGTH_SHORT ).show();
+                } else {
+                    // Otherwise, the update was successful and we can display a toast
+                    Toast.makeText( this, R.string.editor_activity_update_book_successful,
+                            Toast.LENGTH_SHORT ).show();
+                }
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -272,8 +313,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.action_save:
                 // Save a book to the database
                 saveBook();
-                // Exit the activity
-                finish();
+                if (bookIsInvalid) {
+                    showIncompleteFieldsDialog();
+                } else {
+                    // Exit the activity
+                    finish();
+                }
                 return true;
             // Respond to a click on the "Delete" button in the app bar
             case R.id.action_delete:
@@ -281,7 +326,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 showDeleteConfirmationDialog();
                 return true;
             // Respond to a click on the "Up" button in the app bar
-            case R.id.home:
+            case android.R.id.home:
                 // If the book hasn't changed, continue with navigating up to the parent activity
                 if (!bookHasChanged) {
                     NavUtils.navigateUpFromSameTask( EditorActivity.this );
@@ -366,14 +411,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString( nameColumnIndex );
-            int price = cursor.getInt( priceColumnIndex );
+            double price = cursor.getDouble( priceColumnIndex );
             int quantity = cursor.getInt( quantityColumnIndex );
             String supplierName = cursor.getString( supplierNameColumnIndex );
             String supplierPhone = cursor.getString( supplierPhoneColumnIndex );
 
             // Update the views on the screen with the values from the database
             nameEditText.setText( name );
-            priceEditText.setText( Integer.toString( price ) );
+            priceEditText.setText( Double.toString( price ) );
             quantityEditText.setText( Integer.toString( quantity ) );
             supplierEditText.setText( supplierName );
             supplierPhoneEditText.setText( supplierPhone );
@@ -397,7 +442,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      * @param discardButtonClickListener is the click listener for what to do when the
      *                                   user confirms they want to discard their changes
      */
-    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener
+                                                  discardButtonClickListener) {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder( this );
@@ -449,6 +495,29 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     /**
+     * Prompt the user that they must complete all fields before saving the book.
+     */
+    private void showIncompleteFieldsDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+        builder.setMessage( R.string.editor_activity_empty_fields_message );
+        builder.setNegativeButton( R.string.keep_editing, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                // User clicked the "Keep Editing" button, so dismiss the dialog and continue editing
+                if (dialogInterface != null) {
+                    dialogInterface.dismiss();
+                }
+            }
+        } );
+
+        // Create and show AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
      * Perform the deletion of the book in the database
      */
     private void deleteBook() {
@@ -462,11 +531,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText( this, getString( R.string.editor_activity_delete_book_failed ),
+                Toast.makeText( this, R.string.editor_activity_delete_book_failed,
                         Toast.LENGTH_SHORT ).show();
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText( this, getString( R.string.editor_activity_delete_book_successful ),
+                Toast.makeText( this, R.string.editor_activity_delete_book_successful,
                         Toast.LENGTH_SHORT ).show();
             }
         }

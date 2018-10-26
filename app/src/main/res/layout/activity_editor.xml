@@ -2,118 +2,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/activity_margin">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/LinearLayoutTheme">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Book\nInformation" />
+            android:id="@+id/book_information"
+            style="@style/EditorLabelTheme"
+            android:text="@string/book_information_label" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical">
+        <LinearLayout style="@style/EditTextLayoutTheme">
 
             <EditText
                 android:id="@+id/edit_product_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Name"
+                style="@style/EditTextTheme"
+                android:hint="@string/product_name_hint"
                 android:inputType="textCapWords" />
 
             <EditText
                 android:id="@+id/edit_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Price"
+                style="@style/EditTextTheme"
+                android:hint="@string/price_hint"
                 android:inputType="numberDecimal" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/LinearLayoutTheme">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Available\nQuantity" />
+            android:id="@+id/available_quantity"
+            style="@style/EditorLabelTheme"
+            android:text="@string/available_quantity_label" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            style="@style/EditTextLayoutTheme"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/increment_quantity_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ButtonTheme"
                 android:src="@drawable/ic_up_arrow" />
 
             <EditText
                 android:id="@+id/edit_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="#"
+                style="@style/QuantityEditTextTheme"
+                android:hint="@string/quantity_hint"
                 android:inputType="number" />
 
             <ImageButton
                 android:id="@+id/decrement_quantity_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ButtonTheme"
                 android:src="@drawable/ic_down_arrow" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/LinearLayoutTheme">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Supplier \nInformation" />
+            android:id="@+id/supplier_information"
+            style="@style/EditorLabelTheme"
+            android:text="@string/supplier_information_label" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical">
+        <LinearLayout style="@style/EditTextLayoutTheme">
 
             <EditText
                 android:id="@+id/edit_supplier_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Supplier Name"
+                style="@style/EditTextTheme"
+                android:hint="@string/supplier_name_hint"
                 android:inputType="textCapWords" />
 
             <EditText
                 android:id="@+id/edit_supplier_phone_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Supplier Phone #"
+                style="@style/EditTextTheme"
+                android:hint="@string/supplier_phone_hint"
                 android:inputType="phone" />
 
         </LinearLayout>
@@ -122,8 +89,7 @@
 
     <Button
         android:id="@+id/contact_supplier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ButtonTheme"
         android:layout_gravity="center_horizontal"
         android:text="@string/contact_button_label" />
 

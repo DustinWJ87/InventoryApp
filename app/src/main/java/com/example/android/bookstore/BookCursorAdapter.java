@@ -54,12 +54,13 @@ public class BookCursorAdapter extends CursorAdapter {
         priceTextView.setText( bookPriceFinal );
         quantityTextView.setText( String.valueOf( quantityBook ) );
 
+        // Set onClickListener on the "BUY" button, will decrease quantity by 1 unless quantity
+        // is at 0 where we then have a toast message pop up saying "Sold Out"
         button.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (quantityBook == 0) {
                     Toast.makeText( view.getContext(), R.string.book_sold_out, Toast.LENGTH_SHORT ).show();
-                    return;
                 } else {
                     InventoryActivity inventoryActivity = (InventoryActivity) context;
                     inventoryActivity.decreaseQuantity( Integer.valueOf( id ), Integer.valueOf( quantityBook ) );

@@ -7,23 +7,90 @@
 
     <!-- Label for the overflow menu option that deletes all book dta in the app [CHAR LIMIT=20] -->
     <string name="action_delete_all_books">Delete All Books</string>
+
+    <!-- Label for editor activity app bar when adding a new book -->
     <string name="editor_activity_title_new_book">Add a Book</string>
+
+    <!-- Label for editor activity app bar when editing an existing book -->
     <string name="editor_activity_title_existing_book">Edit Book</string>
+
+    <!-- Toast message when error occurs in attempting to save new book -->
     <string name="editor_activity_insert_book_failed">Error with saving book</string>
+
+    <!-- Toast message when a new book is saved successfully -->
     <string name="editor_activity_insert_book_successful">Book Saved</string>
+
+    <!-- Toast message when an error occurs with updating a book -->
     <string name="editor_activity_update_book_failed">Error with updating book</string>
+
+    <!-- Toast message when a book is updated correctly -->
     <string name="editor_activity_update_book_successful">Book Updated</string>
+
+    <!-- Dialog message that appears when you attempt to leave the editor before saving changes -->
     <string name="unsaved_changes_dialog_message">Discard your changes and quit editing?</string>
+
+    <!-- Button label on the Dialog Message -->
     <string name="discard">Discard</string>
+
+    <!-- Button label on the Dialog message -->
     <string name="keep_editing">Keep Editing</string>
+
+    <!-- Label on dialog message when attempting to delete a book -->
     <string name="delete_dialog_message">Delete this Book?</string>
+
+    <!-- Button label on the Dialog Message -->
     <string name="delete">Delete</string>
+
+    <!-- Button label on the dialog message -->
     <string name="cancel">Cancel</string>
+
+    <!-- Toast message that displays when there is an error in updating your book data -->
     <string name="editor_activity_delete_book_failed">Error with deleting book</string>
+
+    <!-- Toast message that displays when you successfully delete a book -->
     <string name="editor_activity_delete_book_successful">Book Deleted</string>
+
+    <!-- Toast message that appears when any quantity display is attempting to go below zero -->
     <string name="book_sold_out">Book is Sold Out</string>
-    <string name="editor_activity_invalid_phone_number">Invalid Phone Number</string>
+
+    <!-- Toast message displayed when you have an incorrect phone number format input -->
+    <string name="editor_activity_invalid_phone_number">Invalid Phone Number\nMust be 10 digits</string>
+
+    <!-- TextView Text for ListView -->
     <string name="quantity_label">Available:</string>
+
+    <!-- Sale Button Text -->
     <string name="sale_button_label">Buy</string>
+
+    <!-- Contact Button Text -->
     <string name="contact_button_label">Contact</string>
+
+    <!-- Toast message that appears when you don't completely fill in the editor activity for a new book -->
+    <string name="editor_activity_empty_fields_message">Must complete all fields!\nPhone # must be 10 digits!\nNo negative numbers!</string>
+
+    <!-- TextView Text for editor Activity -->
+    <string name="supplier_information_label">Supplier  Information</string>
+
+    <!-- TextView Text for editor Activity -->
+    <string name="available_quantity_label">Available Quantity</string>
+
+    <!-- TextView Text for editor Activity -->
+    <string name="book_information_label">Book Information</string>
+
+    <!-- Text hint on editText -->
+    <string name="product_name_hint">Product Name</string>
+
+    <!-- Text hint on editText -->
+    <string name="price_hint">Price</string>
+
+    <!-- Text hint on editText -->
+    <string name="quantity_hint">#</string>
+
+    <!-- Text hint on editText -->
+    <string name="supplier_name_hint">Supplier Name</string>
+
+    <!-- Text hint on editText -->
+    <string name="supplier_phone_hint">Supplier Phone #</string>
+    <string name="that_a_whole_lot_of_empty">That\'s a whole lot of empty!</string>
+    <string name="get_started_by_adding_a_book">Get started by adding a book</string>
 </resources>

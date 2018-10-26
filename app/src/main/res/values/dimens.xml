@@ -2,4 +2,8 @@
 <resources>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="font_label">16sp</dimen>
+    <dimen name="secondary_font">14sp</dimen>
+    <dimen name="layout_weight_dimen">0dp</dimen>
+    <dimen name="subtitle_padding">8dp</dimen>
 </resources>

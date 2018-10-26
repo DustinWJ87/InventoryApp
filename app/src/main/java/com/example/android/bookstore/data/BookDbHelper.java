@@ -27,7 +27,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
      * @param context of the app
      */
     public BookDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super( context, DATABASE_NAME, null, DATABASE_VERSION );
     }
 
     /**
@@ -45,7 +45,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 + BookEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER + " TEXT);";
 
         // Execute the SQL statement
-        db.execSQL(SQL_CREATE_BOOKS_TABLE);
+        db.execSQL( SQL_CREATE_BOOKS_TABLE );
     }
 
     /**
@@ -53,7 +53,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME);
-        onCreate(db);
+        db.execSQL( "DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME );
+        onCreate( db );
     }
 }

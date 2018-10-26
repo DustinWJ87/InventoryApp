@@ -53,8 +53,10 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         // Find the ListView which will be populated with the book data
         ListView bookListView = findViewById( R.id.text_view_inventory );
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        // View emptyView = findViewById(R.id.empty_view); [IMPLEMENT THIS with an image for empty]
-        // bookListView.setEmptyView(emptyView);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items
+        View emptyView = findViewById( R.id.empty_view );
+        bookListView.setEmptyView( emptyView );
 
         // Setup an Adapter to create a list item for each row of book data in the Cursor.
         // There is no book data yet(until the loader finishes) so pass in null for the Cursor.
@@ -169,15 +171,21 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         cursorAdapter.swapCursor( null );
     }
 
-    public void decreaseQuantity(int columnId, int quantity){
+    /**
+     * Helper method for decreasing the quantity if books on the ListView Item
+     *
+     * @param columnId _ID of the current book
+     * @param quantity quantity of the current book
+     */
+    public void decreaseQuantity(int columnId, int quantity) {
         quantity = quantity - 1;
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(BookEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        contentValues.put( BookEntry.COLUMN_PRODUCT_QUANTITY, quantity );
 
-        Uri updateUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, columnId);
+        Uri updateUri = ContentUris.withAppendedId( BookEntry.CONTENT_URI, columnId );
 
-        getContentResolver().update(updateUri, contentValues, null, null);
+        getContentResolver().update( updateUri, contentValues, null, null );
     }
 
 }
